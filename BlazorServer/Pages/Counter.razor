@@ -1,0 +1,21 @@
+﻿@page "/counter"
+@using global::App.IntegrationClient
+@inject ServiceClient client; 
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Hot Something else</h1>
+
+<p role="status">Current count: @data</p>
+
+<button class="btn btn-primary" @onclick="GetDataAsync">Click me</button>
+
+@code {
+    private string data;
+
+    private async void GetDataAsync()
+    {
+        data = await client.GetWeathersAsync();
+        StateHasChanged();
+    }
+}

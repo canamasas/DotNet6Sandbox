@@ -5,7 +5,9 @@ VisualStudioVersion = 17.1.32113.165
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.API", "App.API\App.API.csproj", "{3D6CB231-78BA-4B64-BCAC-54C693C46B3B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "App.IntegrationClient", "App.IntegrationClient\App.IntegrationClient.csproj", "{1771975E-4EFD-4AA7-B38B-1BFE46DCEFC2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "App.IntegrationClient", "App.IntegrationClient\App.IntegrationClient.csproj", "{1771975E-4EFD-4AA7-B38B-1BFE46DCEFC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorServer", "BlazorServer\BlazorServer.csproj", "{25B6E350-11DC-489D-916C-9930E96D6EB3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{1771975E-4EFD-4AA7-B38B-1BFE46DCEFC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1771975E-4EFD-4AA7-B38B-1BFE46DCEFC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1771975E-4EFD-4AA7-B38B-1BFE46DCEFC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25B6E350-11DC-489D-916C-9930E96D6EB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25B6E350-11DC-489D-916C-9930E96D6EB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25B6E350-11DC-489D-916C-9930E96D6EB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25B6E350-11DC-489D-916C-9930E96D6EB3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
