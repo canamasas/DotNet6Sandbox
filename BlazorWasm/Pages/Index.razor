@@ -93,7 +93,7 @@
                 file.IsLoaded = true;
                 file.LoadedSize = (int)buffer.Length;
                 var dicomResult = client.HandleDICOMFile(buffer);
-                if (dicomResult == file.LoadedSize)
+                if (dicomResult != file.LoadedSize)
                 {
                     throw new FileLoadException("wrong sice");
                 }
