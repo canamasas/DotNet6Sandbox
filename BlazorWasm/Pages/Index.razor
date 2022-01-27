@@ -1,13 +1,110 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<h1>Blazor.LocalFiles - Load File(s)</h1>
 
-<h1>Hello, world!</h1>
+<FileSelect @ref="multiFileSelect" IsMultiple="true" FilesSelected="FilesSelectedHandler"></FileSelect>
 
-Welcome to your new app.
+<div class="row">
+    <div class="col-sm-6">
+        <div>
+            <button class="btn btn-primary" @onclick="@SelectFiles">Select Files</button>
+        </div>
+        @if (errorMessage != null)
+        {
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+            <div class="alert alert-warning" role="alert">
+                @errorMessage
+                <button type="button" class="close" aria-label="Close" @onclick="@CloseErrorAlert">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>
 
-<Counter />
+@if (loadFiles != null)
+{
+    <hr />
+    <table class="table table-condensed table-borderless">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Last Modified</th>
+                <th>Size</th>
+                <th>Is Loaded</th>
+                <th>Loaded Size</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in loadFiles)
+            {
+                <tr>
+                    <td>@file.SelectedFile.Name</td>
+                    <td>@file.SelectedFile.LastModified.ToLocalTime()</td>
+                    <td>@file.SelectedFile.Size</td>
+                    <td>@file.IsLoaded</td>
+                    <td>@file.LoadedSize</td>
+                    <td><button class="btn btn-primary" @onclick="@(async () => await LoadSelectedFile(file))">Load File</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 
-<file-upload-1 />
+@code
+{
+    FileSelect multiFileSelect;
+
+    LoadFile[] loadFiles;
+
+    string errorMessage;
+
+    void SelectFiles()
+    {
+        ResetErrorState();
+
+        // Trigger the file selection dialog
+        multiFileSelect.SelectFiles();
+    }
+
+    Task FilesSelectedHandler(SelectedFile[] selectedFiles)
+    {
+        // Store the loaded state about each file (files are lazy loaded into .NET process on demand)
+        loadFiles = selectedFiles.Select(file => new LoadFile()
+        {
+            SelectedFile = file,
+            IsLoaded = false,
+            LoadedSize = 0
+        }).ToArray();
+
+        return Task.CompletedTask;
+    }
+
+    async Task LoadSelectedFile(LoadFile file)
+    {
+        try
+        {
+            using (var fileStream = await multiFileSelect.OpenFileStreamAsync(file.SelectedFile.Name))
+            {
+                var buffer = new System.IO.MemoryStream();
+                await fileStream.CopyToAsync(buffer);
+                file.IsLoaded = true;
+                file.LoadedSize = (int)buffer.Length;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    void CloseErrorAlert()
+    {
+        ResetErrorState();
+    }
+
+    void ResetErrorState()
+    {
+        errorMessage = null;
+    }
+}
