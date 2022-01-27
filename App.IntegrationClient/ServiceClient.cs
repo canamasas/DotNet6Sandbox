@@ -15,4 +15,9 @@ public class ServiceClient
         return data;
     }
 
+    public int HandleDICOMFile(MemoryStream buffer)
+    {
+        return (int)buffer.Length;
+    }
+
 }

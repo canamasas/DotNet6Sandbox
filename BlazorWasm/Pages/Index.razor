@@ -1,13 +1,15 @@
 ﻿@page "/"
 
+@inject ServiceClient client; 
+
 <h1>Blazor.LocalFiles - Load File(s)</h1>
 
-<FileSelect @ref="multiFileSelect" IsMultiple="true" FilesSelected="FilesSelectedHandler"></FileSelect>
+<FileSelect @ref="multiFileSelect" Accept=".dcm" IsMultiple="true" FilesSelected="FilesSelectedHandler"></FileSelect>
 
 <div class="row">
     <div class="col-sm-6">
         <div>
-            <button class="btn btn-primary" @onclick="@SelectFiles">Select Files</button>
+            <button class="btn btn-primary" @onclick="@SelectFiles">Select DICOM Files</button>
         </div>
         @if (errorMessage != null)
         {
@@ -90,6 +92,11 @@
                 await fileStream.CopyToAsync(buffer);
                 file.IsLoaded = true;
                 file.LoadedSize = (int)buffer.Length;
+                var dicomResult = client.HandleDICOMFile(buffer);
+                if (dicomResult == file.LoadedSize)
+                {
+                    throw new FileLoadException("wrong sice");
+                }
             }
         }
         catch (Exception ex)
