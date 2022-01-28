@@ -33,5 +33,18 @@ namespace App.IntegrationClientTest
 
             Assert.True(dicomResult == "EC08");
         }
+
+        [Fact]
+        public async void AnonimizeDicom()
+        {
+            string dicomResult;
+            int expectedResult;
+            var serviceClient = new ServiceClient();
+            var buffer = new System.IO.MemoryStream();
+            var fb = File.ReadAllBytes(@"C:\temp\DICOM_GOOD_IMAGES\EC08\EC08\RP.1.2.246.352.71.5.150896809914.4876.20200826080322.dcm");
+            dicomResult = await serviceClient.AnonymizeDICOM(fb);
+
+            Assert.True(dicomResult == "AnonimizedGuy");
+        }
     }
 }

@@ -45,7 +45,10 @@
         @if (patientId != null)
         {
             <div>
-                Patient ID: @patientId);
+                Patient ID: @patientId
+            </div>
+            <div>
+                Anonimized Patient ID: @anonimized_patientId
             </div>
         }
     </div>
@@ -58,6 +61,7 @@
     LoadFile dicomFile;
 
     string patientId;
+    string anonimized_patientId;
     string dicomFileUrl;
 
     string errorMessage;
@@ -102,6 +106,7 @@
             dicomFile.LoadedSize = dicomData.Length;
 
             patientId = await client.ParseDICOMFile(dicomData);
+            anonimized_patientId = await client.AnonymizeDICOM(dicomData);
         }
         catch (Exception ex)
         {

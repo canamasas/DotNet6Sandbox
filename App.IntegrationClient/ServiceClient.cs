@@ -29,4 +29,21 @@ public class ServiceClient
         var result = dataset.Dataset.GetString(DicomTag.PatientID);
         return result;
     }
+
+    public async Task<string> AnonymizeDICOM(byte[] dicomData)
+    {
+        //DicomAnonymizer.SecurityProfile profile = new DicomAnonymizer.SecurityProfile();
+        var profile = DicomAnonymizer.SecurityProfile.LoadProfile(null, DicomAnonymizer.SecurityProfileOptions.BasicProfile);
+        profile.PatientID = "AnonimizedGuy";
+        DicomAnonymizer anonymizer = new DicomAnonymizer(profile);
+
+        using var memoryStream = new MemoryStream(dicomData);
+        var dataset = await DicomFile.OpenAsync(memoryStream);
+        var anonDataset = anonymizer.Anonymize(dataset);
+        var replacedUIDs = anonymizer.ReplacedUIDs;
+
+        var result = anonDataset.Dataset.GetString(DicomTag.PatientID);
+        
+        return result;
+    }
 }
