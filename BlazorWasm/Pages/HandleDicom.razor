@@ -1,0 +1,121 @@
+﻿@page "/handleDicom"
+@inject ServiceClient client; 
+@using FellowOakDicom;
+
+<h1>Blazor.LocalFiles - Load Dicom</h1>
+
+
+<FileSelect @ref="dicomFileSelect" Accept=".dcm" FilesSelected="DicomFileSelectedHandler"></FileSelect>
+
+<div class="row">
+    <div class="col-sm-6">
+        <div>
+            <button class="btn btn-primary" @onclick="@SelectDicomFile">Select Dicom File</button>
+        </div>
+        @if (errorMessage != null)
+        {
+
+            <div class="alert alert-warning" role="alert">
+                @errorMessage
+                <button type="button" class="close" aria-label="Close" @onclick="@CloseErrorAlert">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@if (dicomFileUrl != null)
+{
+    <hr />
+    <div>
+        <div style="margin: 10px;">
+            <img src="@dicomFileUrl" style="width: 400px;" />
+        </div>
+        <div>
+            <h5>Load the image data into .NET</h5>
+            <button class="btn btn-primary" @onclick="@LoadSelectedDicomFile">Load Dicom File</button>
+        </div>
+        <div>
+            Is Loaded: @dicomFile.IsLoaded
+        </div>
+        <div>
+            Loaded Size: @dicomFile.LoadedSize
+        </div>
+        @if (patientId != null)
+        {
+            <div>
+                Patient ID: @patientId);
+            </div>
+        }
+    </div>
+}
+
+@code
+{
+    FileSelect dicomFileSelect;
+
+    LoadFile dicomFile;
+
+    string patientId;
+    string dicomFileUrl;
+
+    string errorMessage;
+
+    void SelectDicomFile()
+    {
+        ResetErrorState();
+
+        // Trigger the file selection dialog
+        dicomFileSelect.SelectFiles();
+    }
+
+    // Shows how to use the blob file url directly for rendering.
+    // LoadImageFile() below also loads the image's raw data directly into the .NET runtime.
+    async Task DicomFileSelectedHandler(SelectedFile[] selectedFiles)
+    {
+        dicomFile = new LoadFile()
+        {
+            SelectedFile = selectedFiles.FirstOrDefault(),
+            IsLoaded = false,
+            LoadedSize = 0
+        };
+
+        try
+        {
+            // load the blob url and dispaly the image
+            dicomFileUrl = await dicomFileSelect.GetFileBlobUrlAsync(dicomFile.SelectedFile.Name);
+            //StateHasChanged();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    async Task LoadSelectedDicomFile()
+    {
+        try
+        {
+            var dicomData = await dicomFileSelect.GetFileBytesAsync(dicomFile.SelectedFile.Name);
+            dicomFile.IsLoaded = true;
+            dicomFile.LoadedSize = dicomData.Length;
+
+            patientId = await client.ParseDICOMFile(dicomData);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    void CloseErrorAlert()
+    {
+        ResetErrorState();
+    }
+
+    void ResetErrorState()
+    {
+        errorMessage = null;
+    }
+}
